@@ -97,6 +97,19 @@ rLCDC_DEFAULT EQU %11100011
 
 	predef LoadSGB
 
+IF DEF(_SKIP_INTRO)
+	xor a
+	ld [hWY], a
+	inc a
+	ld [H_AUTOBGTRANSFERENABLED], a
+	call ClearScreen
+	ld a, vBGMap0 / $100
+	call TitleScreenCopyTileMapToVRAM
+	ld a, vBGMap1 / $100
+	call TitleScreenCopyTileMapToVRAM
+	call LoadGBPal
+	jp MainMenu
+ELSE
 	ld a, BANK(SFX_Shooting_Star)
 	ld [wAudioROMBank], a
 	ld [wAudioSavedROMBank], a
@@ -117,6 +130,7 @@ rLCDC_DEFAULT EQU %11100011
 	ld [rLCDC], a
 
 	jp SetDefaultNamesBeforeTitlescreen
+ENDC
 
 ClearVram:
 	ld hl, $8000
