@@ -1,10 +1,5 @@
 BorderPalettes:
-IF DEF(_RED)
-	INCBIN "gfx/red/sgbborder.map"
-ENDC
-IF DEF(_BLUE)
-	INCBIN "gfx/blue/sgbborder.map"
-ENDC
+	INCBIN "gfx/sgbborder.map"
 
 	ds $100
 
@@ -54,9 +49,4 @@ ENDC
 	ds $18
 
 SGBBorderGraphics:
-IF DEF(_RED)
-	INCBIN "gfx/red/sgbborder.2bpp"
-ENDC
-IF DEF(_BLUE)
-	INCBIN "gfx/blue/sgbborder.2bpp"
-ENDC
+	INCBIN "gfx/sgbborder.2bpp"

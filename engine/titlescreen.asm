@@ -55,11 +55,6 @@ DisplayTitleScreen:
 	ld bc, $100
 	ld a, BANK(PokemonLogoGraphics)
 	call FarCopyData2          ; second chunk
-	ld hl, Version_GFX
-	ld de, vChars2 + $600 - (Version_GFXEnd - Version_GFX - $50)
-	ld bc, Version_GFXEnd - Version_GFX
-	ld a, BANK(Version_GFX)
-	call FarCopyDataDouble
 	call ClearBothBGMaps
 
 ; place tiles for pokemon logo (except for the last row)
@@ -92,15 +87,10 @@ DisplayTitleScreen:
 
 	call DrawPlayerCharacter
 
-; put a pokeball in the player's hand
-	ld hl, wOAMBuffer + $28
-	ld a, $74
-	ld [hl], a
-
 ; place tiles for title screen copyright
-	coord hl, 2, 17
+	coord hl, 3, 17
 	ld de, .tileScreenCopyrightTiles
-	ld b, $10
+	ld b, $0D
 .tileScreenCopyrightTilesLoop
 	ld a, [de]
 	ld [hli], a
@@ -111,18 +101,13 @@ DisplayTitleScreen:
 	jr .next
 
 .tileScreenCopyrightTiles
-	db $41,$42,$43,$42,$44,$42,$45,$46,$47,$48,$49,$4A,$4B,$4C,$4D,$4E ; ©'95.'96.'98 GAME FREAK inc.
+	db $41,$42,$43,$44,$46,$47,$48,$49,$4A,$4B,$4C,$4D,$4E ; ©1995 GAME FREAK inc.
 
 .next
 	call SaveScreenTilesToBuffer2
 	call LoadScreenTilesFromBuffer2
 	call EnableLCD
-IF DEF(_RED)
-	ld a, CHARMANDER ; which Pokemon to show first on the title screen
-ENDC
-IF DEF(_BLUE)
-	ld a, SQUIRTLE ; which Pokemon to show first on the title screen
-ENDC
+	ld a, RHYDON ; which Pokemon to show first on the title screen
 
 	ld [wTitleMonSpecies], a
 	call LoadTitleMonSprite
@@ -184,31 +169,15 @@ ENDC
 	call LoadScreenTilesFromBuffer1
 	ld c, 36
 	call DelayFrames
-	ld a, SFX_INTRO_WHOOSH
-	call PlaySound
 
-; scroll game version in from the right
-	call PrintGameVersionOnTitleScreen
 	ld a, SCREEN_HEIGHT_PIXELS
 	ld [hWY], a
-	ld d, 144
-.scrollTitleScreenGameVersionLoop
-	ld h, d
-	ld l, 64
-	call ScrollTitleScreenGameVersion
-	ld h, 0
-	ld l, 80
-	call ScrollTitleScreenGameVersion
-	ld a, d
-	add 4
-	ld d, a
-	and a
-	jr nz, .scrollTitleScreenGameVersionLoop
+	xor a
+	ld [rSCX], a
 
 	ld a, vBGMap1 / $100
 	call TitleScreenCopyTileMapToVRAM
 	call LoadScreenTilesFromBuffer2
-	call PrintGameVersionOnTitleScreen
 	call Delay3
 	call WaitForSoundToFinish
 	ld a, MUSIC_TITLE_SCREEN
@@ -226,7 +195,6 @@ ENDC
 	ld c, 1
 	call CheckForUserInterruption
 	jr c, .finishedWaiting
-	callba TitleScreenAnimateBallIfStarterOut
 	call TitleScreenPickNewMon
 	jr .awaitUserInterruptionLoop
 
@@ -264,7 +232,7 @@ TitleScreenPickNewMon:
 .loop
 ; Keep looping until a mon different from the current one is picked.
 	call Random
-	and $f
+	and $1f
 	ld c, a
 	ld b, 0
 	ld hl, TitleMons
@@ -292,21 +260,6 @@ TitleScreenScrollInMon:
 	ld [hWY], a
 	ret
 
-ScrollTitleScreenGameVersion:
-.wait
-	ld a, [rLY]
-	cp l
-	jr nz, .wait
-
-	ld a, h
-	ld [rSCX], a
-
-.wait2
-	ld a, [rLY]
-	cp h
-	jr z, .wait2
-	ret
-
 DrawPlayerCharacter:
 	ld hl, PlayerCharacterTitleGraphics
 	ld de, vSprites
@@ -317,7 +270,7 @@ DrawPlayerCharacter:
 	xor a
 	ld [wPlayerCharacterOAMTile], a
 	ld hl, wOAMBuffer
-	ld de, $605a
+	lb de, $60, $30
 	ld b, 7
 .loop
 	push de
@@ -353,7 +306,7 @@ ClearBothBGMaps:
 LoadTitleMonSprite:
 	ld [wcf91], a
 	ld [wd0b5], a
-	coord hl, 5, 10
+	coord hl, 9, 10
 	call GetMonHeader
 	jp LoadFrontSpriteByMonIndex
 
@@ -372,32 +325,17 @@ LoadCopyrightTiles:
 	ld hl, vChars2 + $600
 	lb bc, BANK(NintendoCopyrightLogoGraphics), (GamefreakLogoGraphicsEnd - NintendoCopyrightLogoGraphics) / $10
 	call CopyVideoData
-	coord hl, 2, 7
+	coord hl, 5, 7
 	ld de, CopyrightTextString
 	jp PlaceString
 
 CopyrightTextString:
-	db   $60,$61,$62,$61,$63,$61,$64,$7F,$65,$66,$67,$68,$69,$6A             ; ©'95.'96.'98 Nintendo
-	next $60,$61,$62,$61,$63,$61,$64,$7F,$6B,$6C,$6D,$6E,$6F,$70,$71,$72     ; ©'95.'96.'98 Creatures inc.
-	next $60,$61,$62,$61,$63,$61,$64,$7F,$73,$74,$75,$76,$77,$78,$79,$7A,$7B ; ©'95.'96.'98 GAME FREAK inc.
+	db   $60,$61,$62,$63,$64,$65,$66,$67,$68,$69 ; ©1995 Nintendo
+	next $60,$61,$62,$63,$6A,$6B,$6C,$6D,$6E,$6F,$70,$71 ; ©1995 Creatures inc.
+	next $60,$61,$62,$63,$72,$73,$74,$75,$76,$77,$78,$79,$7A ; ©1995 GAME FREAK inc.
 	db   "@"
 
 INCLUDE "data/title_mons.asm"
-
-; prints version text (red, blue)
-PrintGameVersionOnTitleScreen:
-	coord hl, 7, 8
-	ld de, VersionOnTitleScreenText
-	jp PlaceString
-
-; these point to special tiles specifically loaded for that purpose and are not usual text
-VersionOnTitleScreenText:
-IF DEF(_RED)
-	db $60,$61,$7F,$65,$66,$67,$68,$69,"@" ; "Red Version"
-ENDC
-IF DEF(_BLUE)
-	db $61,$62,$63,$64,$65,$66,$67,$68,"@" ; "Blue Version"
-ENDC
 
 NintenText: db "NINTEN@"
 SonyText:   db "SONY@"
