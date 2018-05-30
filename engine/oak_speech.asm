@@ -75,9 +75,25 @@ OakSpeech:
 	call PrintText
 	call GBFadeOutToWhite
 	call ClearScreen
-	ld de, RedPicFront
-	lb bc, Bank(RedPicFront), $00
-	call IntroDisplayPicCenteredOrUpperRight
+	call GBFadeInFromWhite
+	ld hl, IntroducePlayerGenderText
+	call PrintText
+	;; Show the Boy/Girl menu
+	coord hl, 13, 7
+	lb bc, 8, 14
+	ld a, BOY_GIRL_MENU
+	ld [wTwoOptionMenuID], a
+	ld a, TWO_OPTION_MENU
+	ld [wTextBoxID], a
+	call DisplayTextBoxID
+	;; Record their choice
+	ld a, [wMenuExitMethod]
+	dec a
+	ld [wPlayerGender], a
+	;; Show their chosen character
+	call ClearScreen
+	ld c, $00
+	call IntroDisplayPlayerPic
 	call MovePicLeft
 	ld hl, IntroducePlayerText
 	call PrintText
@@ -94,9 +110,8 @@ OakSpeech:
 .skipChoosingNames
 	call GBFadeOutToWhite
 	call ClearScreen
-	ld de, RedPicFront
-	lb bc, Bank(RedPicFront), $00
-	call IntroDisplayPicCenteredOrUpperRight
+	ld c, $00
+	call IntroDisplayPlayerPic
 	call GBFadeInFromWhite
 	ld a, [wd72d]
 	and a
@@ -113,9 +128,14 @@ OakSpeech:
 	ld [MBC1RomBank], a
 	ld c, 4
 	call DelayFrames
+	ld a, [wPlayerGender]
+	or a
 	ld de, RedSprite
-	ld hl, vSprites
+	jr z, .copy
+	ld de, GreenSprite
+.copy
 	lb bc, BANK(RedSprite), $0C
+	ld hl, vSprites
 	call CopyVideoData
 	ld de, ShrinkPic1
 	lb bc, BANK(ShrinkPic1), $00
@@ -159,6 +179,9 @@ OakSpeechText2:
 	TX_FAR _OakSpeechText2A
 	TX_CRY_NIDORINA
 	TX_FAR _OakSpeechText2B
+	db "@"
+IntroducePlayerGenderText:
+	TX_FAR _IntroducePlayerGenderText
 	db "@"
 IntroducePlayerText:
 	TX_FAR _IntroducePlayerText
@@ -231,3 +254,12 @@ IntroDisplayPicCenteredOrUpperRight:
 	xor a
 	ld [hStartTileID], a
 	predef_jump CopyUncompressedPicToTilemap
+
+IntroDisplayPlayerPic:
+	ld a, [wPlayerGender]
+	or a
+	ld b, BANK(RedPicFront)
+	ld de, RedPicFront
+	jr z, IntroDisplayPicCenteredOrUpperRight
+	ld de, GreenPicFront
+	jr IntroDisplayPicCenteredOrUpperRight

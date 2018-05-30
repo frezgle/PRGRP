@@ -183,7 +183,12 @@ HoFMonInfoText:
 	next "TYPE2/@"
 
 HoFLoadPlayerPics:
+	ld a, [wPlayerGender]
+	or a
 	ld de, RedPicFront
+	jr z, .front
+	ld de, GreenPicFront
+.front
 	ld a, BANK(RedPicFront)
 	call UncompressSpriteFromDE
 	ld hl, sSpriteBuffer1
@@ -192,8 +197,14 @@ HoFLoadPlayerPics:
 	call CopyData
 	ld de, vFrontPic
 	call InterlaceMergeSpriteBuffers
-	ld de, RedPicBack
+	ld a, [wPlayerGender]
+	or a
 	ld a, BANK(RedPicBack)
+	ld de, RedPicBack
+	jr z, .back
+	ld a, BANK(GreenPicBack)
+	ld de, GreenPicBack
+.back
 	call UncompressSpriteFromDE
 	predef ScaleSpriteByTwo
 	ld de, vBackPic

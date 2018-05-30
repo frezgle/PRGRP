@@ -538,6 +538,8 @@ TwoOptionMenuStrings:
 	dw .HealCancelMenu
 	db 4,3,0
 	dw .NoYesMenu
+	db 5,3,0
+	dw .BoyGirlMenu
 
 .NoYesMenu
 	db   "NO"
@@ -560,6 +562,9 @@ TwoOptionMenuStrings:
 .HealCancelMenu
 	db   "HEAL"
 	next "CANCEL@"
+.BoyGirlMenu
+	db   "BOY"
+	next "GIRL@"
 
 DisplayFieldMoveMonMenu:
 	xor a

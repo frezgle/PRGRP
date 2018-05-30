@@ -20,11 +20,9 @@ ROMX $3
 ROMX $4
   "NPC Sprites 1" ; NPC_SPRITES_1
   "Graphics" ; GFX
-  "Battle (bank 4)"
 
 ROMX $5
-  "NPC Sprites 2" ; NPC_SPRITES_2
-  "Battle (bank 5)"
+  "Battle"
 
 ROMX $6
   "bank6"
@@ -44,18 +42,19 @@ ROMX $9
 
 ROMX $A
   "Pics 2" ; PICS_2
-  "Battle (bank A)"
 
 ROMX $B
   "Pics 3" ; PICS_3
-  "Battle (bank B)"
 
 ROMX $C
   "Pics 4" ; PICS_4
 
 ROMX $D
   "Pics 5" ; PICS_5
-  "Battle (bank D)"
+
+ROMX $2D
+  "Pics 6" ; PICS_6
+  "NPC Sprites 2" ; NPC_SPRITES_2
 
 ROMX $E
   "bankE"

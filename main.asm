@@ -1,7 +1,7 @@
 INCLUDE "constants.asm"
 
 NPC_SPRITES_1 EQU $4
-NPC_SPRITES_2 EQU $5
+NPC_SPRITES_2 EQU $2D
 
 GFX EQU $4
 
@@ -10,6 +10,7 @@ PICS_2 EQU $A
 PICS_3 EQU $B
 PICS_4 EQU $C
 PICS_5 EQU $D
+PICS_6 EQU $2D
 
 INCLUDE "home.asm"
 
@@ -184,17 +185,11 @@ PlayerCharacterTitleGraphics:   INCBIN "gfx/player_title.2bpp"
 PlayerCharacterTitleGraphicsEnd:
 
 
-SECTION "Battle (bank 4)", ROMX, BANK[$4]
+SECTION "Battle", ROMX, BANK[$5]
 
 INCLUDE "engine/overworld/is_player_just_outside_map.asm"
 INCLUDE "engine/menu/status_screen.asm"
 INCLUDE "engine/menu/party_menu.asm"
-
-RedPicFront:: INCBIN "pic/trainer/red.pic"
-RedPicBack::  INCBIN "pic/trainer/redb.pic"
-OldManPic::   INCBIN "pic/trainer/oldman.pic"
-ShrinkPic1::  INCBIN "pic/trainer/shrink1.pic"
-ShrinkPic2::  INCBIN "pic/trainer/shrink2.pic"
 
 INCLUDE "engine/turn_sprite.asm"
 INCLUDE "engine/menu/start_sub_menus.asm"
@@ -214,12 +209,36 @@ INCLUDE "engine/battle/moveEffects/focus_energy_effect.asm"
 ;;; moved from bank C
 INCLUDE "engine/battle/moveEffects/mist_effect.asm"
 INCLUDE "engine/battle/moveEffects/one_hit_ko_effect.asm"
+;;; moved from bank 5
+INCLUDE "engine/load_pokedex_tiles.asm"
+INCLUDE "engine/overworld/map_sprites.asm"
+INCLUDE "engine/overworld/emotion_bubbles.asm"
+INCLUDE "engine/evolve_trade.asm"
+INCLUDE "engine/battle/moveEffects/substitute_effect.asm"
+INCLUDE "engine/menu/pc.asm"
+;;; moved from bank A
+INCLUDE "engine/battle/moveEffects/leech_seed_effect.asm"
+;;; moved from bank B
+INCLUDE "engine/battle/display_effectiveness.asm"
+INCLUDE "engine/items/tmhm.asm"
+INCLUDE "engine/battle/scale_sprites.asm"
+INCLUDE "engine/battle/moveEffects/pay_day_effect.asm"
+INCLUDE "engine/game_corner_slots2.asm"
+;;; moved from bank D
+INCLUDE "engine/titlescreen2.asm"
+INCLUDE "engine/battle/link_battle_versus_text.asm"
+INCLUDE "engine/slot_machine.asm"
+INCLUDE "engine/overworld/pewter_guys.asm"
+INCLUDE "engine/multiply_divide.asm"
+INCLUDE "engine/game_corner_slots.asm"
 
 
 SECTION "NPC Sprites 2", ROMX, BANK[NPC_SPRITES_2]
 
 RedCyclingSprite:     INCBIN "gfx/sprites/cycling.2bpp"
 RedSprite:            INCBIN "gfx/sprites/red.2bpp"
+GreenCyclingSprite:   INCBIN "gfx/sprites/green_cycling.2bpp"
+GreenSprite:          INCBIN "gfx/sprites/green.2bpp"
 BlueSprite:           INCBIN "gfx/sprites/blue.2bpp"
 OakSprite:            INCBIN "gfx/sprites/oak.2bpp"
 BugCatcherSprite:     INCBIN "gfx/sprites/bug_catcher.2bpp"
@@ -258,16 +277,6 @@ AgathaSprite:         INCBIN "gfx/sprites/agatha.2bpp"
 BrunoSprite:          INCBIN "gfx/sprites/bruno.2bpp"
 LoreleiSprite:        INCBIN "gfx/sprites/lorelei.2bpp"
 SeelSprite:           INCBIN "gfx/sprites/seel.2bpp"
-
-
-SECTION "Battle (bank 5)", ROMX, BANK[$5]
-
-INCLUDE "engine/load_pokedex_tiles.asm"
-INCLUDE "engine/overworld/map_sprites.asm"
-INCLUDE "engine/overworld/emotion_bubbles.asm"
-INCLUDE "engine/evolve_trade.asm"
-INCLUDE "engine/battle/moveEffects/substitute_effect.asm"
-INCLUDE "engine/menu/pc.asm"
 
 
 SECTION "bank6",ROMX,BANK[$6]
@@ -656,10 +665,6 @@ MoltresPicFront::     INCBIN "pic/mon/moltres.pic"
 MoltresPicBack::      INCBIN "pic/monback/moltresb.pic"
 
 
-SECTION "Battle (bank A)", ROMX, BANK[$A]
-INCLUDE "engine/battle/moveEffects/leech_seed_effect.asm"
-
-
 SECTION "Pics 3", ROMX, BANK[PICS_3]
 
 ArticunoPicFront::    INCBIN "pic/mon/articuno.pic"
@@ -736,18 +741,11 @@ FossilKabutopsPic::   INCBIN "pic/mon/fossilkabutops.pic"
 
 SECTION "Battle (bank B)", ROMX, BANK[$B]
 
-INCLUDE "engine/battle/display_effectiveness.asm"
-
 TrainerInfoTextBoxTileGraphics:  INCBIN "gfx/trainer_info.2bpp"
 TrainerInfoTextBoxTileGraphicsEnd:
 BlankLeaderNames:                INCBIN "gfx/blank_leader_names.2bpp"
 CircleTile:                      INCBIN "gfx/circle_tile.2bpp"
 BadgeNumbersTileGraphics:        INCBIN "gfx/badge_numbers.2bpp"
-
-INCLUDE "engine/items/tmhm.asm"
-INCLUDE "engine/battle/scale_sprites.asm"
-INCLUDE "engine/battle/moveEffects/pay_day_effect.asm"
-INCLUDE "engine/game_corner_slots2.asm"
 
 
 SECTION "Pics 4", ROMX, BANK[PICS_4]
@@ -870,14 +868,15 @@ VictreebelPicFront::   INCBIN "pic/mon/victreebel.pic"
 VictreebelPicBack::    INCBIN "pic/monback/victreebelb.pic"
 
 
-SECTION "Battle (bank D)", ROMX, BANK[$D]
+SECTION "Pics 6",ROMX,BANK[PICS_6]
 
-INCLUDE "engine/titlescreen2.asm"
-INCLUDE "engine/battle/link_battle_versus_text.asm"
-INCLUDE "engine/slot_machine.asm"
-INCLUDE "engine/overworld/pewter_guys.asm"
-INCLUDE "engine/multiply_divide.asm"
-INCLUDE "engine/game_corner_slots.asm"
+RedPicFront::   INCBIN "pic/trainer/red.pic"
+RedPicBack::    INCBIN "pic/trainer/redb.pic"
+GreenPicFront:: INCBIN "pic/trainer/green.pic"
+GreenPicBack::  INCBIN "pic/trainer/greenb.pic"
+OldManPic::     INCBIN "pic/trainer/oldman.pic"
+ShrinkPic1::    INCBIN "pic/trainer/shrink1.pic"
+ShrinkPic2::    INCBIN "pic/trainer/shrink2.pic"
 
 
 SECTION "bankE",ROMX,BANK[$E]

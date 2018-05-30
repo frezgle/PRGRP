@@ -1,11 +1,20 @@
 ChoosePlayerName:
 	call OakSpeechSlidePicRight
-	ld de, DefaultNamesPlayer
+	;; Pick correct name lists
+	ld a, [wPlayerGender]
+	or a
+	ld de, DefaultNamesPlayerBoy
+	ld hl, DefaultNamesPlayerBoyList
+	jr z, .next
+	ld de, DefaultNamesPlayerGirl
+	ld hl, DefaultNamesPlayerGirlList
+.next
+	push hl
 	call DisplayIntroNameTextBox
+	pop hl
 	ld a, [wCurrentMenuItem]
 	and a
 	jr z, .customName
-	ld hl, DefaultNamesPlayerList
 	call GetDefaultName
 	ld de, wPlayerName
 	call OakSpeechSlidePicLeft
@@ -20,9 +29,7 @@ ChoosePlayerName:
 	jr z, .customName
 	call ClearScreen
 	call Delay3
-	ld de, RedPicFront
-	ld b, BANK(RedPicFront)
-	call IntroDisplayPicCenteredOrUpperRight
+	call IntroDisplayPlayerPic
 .done
 	ld hl, YourNameIsText
 	jp PrintText
@@ -187,12 +194,18 @@ DisplayIntroNameTextBox:
 .namestring
 	db "NAME@"
 
-IF DEF(_RED)
-DefaultNamesPlayer:
+DefaultNamesPlayerBoy:
 	db   "NEW NAME"
 	next "RED"
 	next "ASH"
 	next "JACK"
+	db   "@"
+
+DefaultNamesPlayerGirl:
+	db   "NEW NAME"
+	next "GREEN"
+	next "ASHLEY"
+	next "JILL"
 	db   "@"
 
 DefaultNamesRival:
@@ -201,23 +214,6 @@ DefaultNamesRival:
 	next "GARY"
 	next "JOHN"
 	db   "@"
-ENDC
-
-IF DEF(_BLUE)
-DefaultNamesPlayer:
-	db   "NEW NAME"
-	next "BLUE"
-	next "GARY"
-	next "JOHN"
-	db   "@"
-
-DefaultNamesRival:
-	db   "NEW NAME"
-	next "RED"
-	next "ASH"
-	next "JACK"
-	db   "@"
-ENDC
 
 GetDefaultName:
 ; a = name index
@@ -243,30 +239,21 @@ GetDefaultName:
 	ld bc, $14
 	jp CopyData
 
-IF DEF(_RED)
-DefaultNamesPlayerList:
+DefaultNamesPlayerBoyList:
 	db "NEW NAME@"
 	db "RED@"
 	db "ASH@"
 	db "JACK@"
+DefaultNamesPlayerGirlList:
+	db "NEW NAME@"
+	db "GREEN@"
+	db "ASHLEY@"
+	db "JILL@"
 DefaultNamesRivalList:
 	db "NEW NAME@"
 	db "BLUE@"
 	db "GARY@"
 	db "JOHN@"
-ENDC
-IF DEF(_BLUE)
-DefaultNamesPlayerList:
-	db "NEW NAME@"
-	db "BLUE@"
-	db "GARY@"
-	db "JOHN@"
-DefaultNamesRivalList:
-	db "NEW NAME@"
-	db "RED@"
-	db "ASH@"
-	db "JACK@"
-ENDC
 
 TextTerminator_6b20:
 	db "@"

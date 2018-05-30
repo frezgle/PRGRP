@@ -84,6 +84,7 @@ NORTH_EAST_MENU   EQU 4
 TRADE_CANCEL_MENU EQU 5
 HEAL_CANCEL_MENU  EQU 6
 NO_YES_MENU       EQU 7
+BOY_GIRL_MENU     EQU 8
 
 ; menu exit method constants for list menus and the buy/sell/quit menu
 CHOSE_MENU_ITEM   EQU 1 ; pressed A
@@ -204,3 +205,6 @@ LINK_STATE_TRADING       EQU $32 ; in a link trade
 LINKBATTLE_RUN       EQU $F
 LINKBATTLE_STRUGGLE  EQU $E
 LINKBATTLE_NO_ACTION EQU $D
+
+GENDER_BOY  EQU $00
+GENDER_GIRL EQU $01

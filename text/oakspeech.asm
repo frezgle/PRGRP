@@ -26,6 +26,12 @@ _OakSpeechText2B::
 	line "as a profession."
 	prompt
 
+_IntroducePlayerGenderText::
+	text "Now tell me."
+	line "Are you a boy?"
+	cont "Or a girl?"
+	done
+
 _IntroducePlayerText::
 	text "First, what is"
 	line "your name?"

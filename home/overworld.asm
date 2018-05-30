@@ -490,8 +490,6 @@ WarpFound2::
 ; this is for handling "outside" maps that can't have the 0xFF destination map
 	ld a, [wCurMap]
 	ld [wLastMap], a
-	ld a, [wCurMapWidth]
-	ld [wUnusedD366], a ; not read
 	ld a, [hWarpDestinationMap]
 	ld [wCurMap], a
 	cp ROCK_TUNNEL_1
@@ -2000,8 +1998,12 @@ RunMapScript::
 	ret
 
 LoadWalkingPlayerSpriteGraphics::
-	ld de, RedSprite
 	ld hl, vNPCSprites
+	ld a, [wPlayerGender]
+	or a
+	ld de, RedSprite
+	jr z, LoadPlayerSpriteGraphicsCommon
+	ld de, GreenSprite
 	jr LoadPlayerSpriteGraphicsCommon
 
 LoadSurfingPlayerSpriteGraphics::
@@ -2010,14 +2012,21 @@ LoadSurfingPlayerSpriteGraphics::
 	jr LoadPlayerSpriteGraphicsCommon
 
 LoadBikePlayerSpriteGraphics::
-	ld de, RedCyclingSprite
 	ld hl, vNPCSprites
+	ld a, [wPlayerGender]
+	or a
+	ld de, RedCyclingSprite
+	jr z, LoadPlayerSpriteGraphicsCommon
+	ld de, GreenCyclingSprite
+	jr LoadPlayerSpriteGraphicsCommon
 
 LoadPlayerSpriteGraphicsCommon::
 	push de
 	push hl
 	lb bc, BANK(RedSprite), $0c
+	push bc
 	call CopyVideoData
+	pop bc
 	pop hl
 	pop de
 	ld a, $c0
@@ -2027,7 +2036,6 @@ LoadPlayerSpriteGraphicsCommon::
 	inc d
 .noCarry
 	set 3, h
-	lb bc, BANK(RedSprite), $0c
 	jp CopyVideoData
 
 ; function to load data from the map header
